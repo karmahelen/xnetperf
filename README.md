@@ -13,7 +13,7 @@ I have built many test utilities over the course of my career and performed 1000
 * Iperf test allows you to easily utilize iperf3
 * All test parameters are configurable
 
-I would definitely like to add more features based on feedback.
+I would definitely like to add more features based on feedback. Since I have just been using it for personal purposes, I have not added in turntable support, more comprehensive automated test scenarios and/or complex history and report generation yet ;)
 
 ## Install
 Run the following to install/update:

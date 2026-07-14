@@ -4,14 +4,14 @@ xnetperf is a network performance test utility built on the Hearth framework (ht
 
 Check out the "App Pics" below to see what it looks like and get a sense of what it can do.
 
-I have built many test utilities over the course of my career and performed 1000s of hours of characterization of all major WiFi chipsets and various networking products (routers/switches/gateways/bluetooth devices/IoT devices/smartphones). Leveraging what I have learned, I wanted to build a network performance test utility that specifically leveraged the hearth framework. This app is meant to be ran in serve mode and then connecting from one or more devices/clients that are on the same network. I, in particular, use it to verify/check the performance of what my server can provide.
+I have built many test utilities over the course of my career and performed 1000s of hours of characterization of all major WiFi chipsets and various networking products (routers/switches/gateways/bluetooth devices/IoT devices/smartphones). Leveraging what I have learned, I wanted to build a network performance test utility that specifically leveraged the hearth framework. This app is meant to be run in serve mode and then connecting from the browser of one or more devices/clients that are on the same network. I, in particular, use it to verify/check the performance of what my server can provide.
 
 ## Features
-* Throughput test allows you to quickly verify the bulk download and/or upload TCP performance to a single device/client.
-* Stream test allows you to to send a constant data rate TCP download stream with a optional buffer and/or bulk download/upload contention to verify throughput and latency.
-* Multi Client test allows you to verify multiple streams to multiple devices/clients.
-* Iperf test allows you to easily utilize iperf3.
-* All test parameters are configurable.
+* Throughput test allows you to quickly verify the bulk download and/or upload TCP performance to a single device/client
+* Stream test allows you to to send a constant data rate TCP download stream with an optional buffer and/or bulk download/upload contention to verify throughput and latency
+* Multi Client test allows you to verify multiple streams to multiple devices/clients
+* Iperf test allows you to easily utilize iperf3
+* All test parameters are configurable
 
 I would definitely like to add more features based on feedback.
 
@@ -31,7 +31,7 @@ Everything is self-contained to the folder you install to so if you don't like i
 ## Background
 I started development of this project for my own personal purposes on my Linux Mint. As I started building it up, I thought that this might be worthwhile to share. As a solo developer, I have currently only been able to fully test it out on Linux Mint 22.2 Cinnamon. I believe it should work with current releases of Ubuntu and potentially other similar Linux distros. If I can strike up interest, I would love to continue developing this for a broader audience but I need feedback. You can reach out to me at:
 
-Need Email
+xnetperf.puppet866@passinbox.com
 (I am using an email alias for filtering purposes and this is what I was able to create)
 
 I am still working on better documentation to describe the functionality and features but am waiting to see if there is any real interest before spending too much effort.

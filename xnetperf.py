@@ -42,7 +42,7 @@ Run:
     [uv run] xnetperf.py --serve [port]  # LAN web access
 
 Developer:  KarmaHelen
-Contact:    Need Email
+Contact:    xnetperf.puppet866@passinbox.com
 Support:    https://buymeacoffee.com/karmahelen
 """
 

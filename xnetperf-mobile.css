@@ -1,0 +1,60 @@
+/* xnetperf — mobile overrides only. Desktop CSS is never modified;
+   these rules activate on narrow viewports. */
+
+@media (max-width: 600px) {
+    /* Size the app column to the *visible* viewport (dvh) instead of the largest
+       one (vh), so a bottom-positioned address bar can't cover the status bar or
+       the last sliver of scrollable content. Falls back to 100vh where dvh is
+       unsupported (the second declaration is simply dropped). */
+    body { height: 100vh; height: 100dvh; }
+
+    .header { padding: 10px 16px; }
+    .content { padding: 16px; }
+    .content::-webkit-scrollbar { display: none; }
+
+    .tabs { padding: 0 16px; }
+    .tab { flex: 1; padding: 11px 8px; }
+
+    /* Stack the gauges vertically; each spans the width */
+    .gauges { flex-direction: column; gap: 14px; align-items: stretch; }
+    .gauge-card { max-width: none; }
+    .gauge-wrap { max-width: 220px; margin: 0 auto; }
+
+    /* Roomier touch targets */
+    .btn { min-height: 40px; }
+    .btn.big { width: 100%; padding: 14px; }
+    .controls { margin-bottom: 16px; }
+    /* keep the run button + cogwheel on one row */
+    .controls .btn.big { flex: 1; width: auto; }
+    .config-panel { padding: 12px 13px; }
+    .cfg-num { width: 70px; }
+    .cfg-help-row { grid-template-columns: 1fr; gap: 1px; margin-bottom: 7px; }
+
+    /* Safety tab */
+    .safety-config { flex-direction: column; gap: 16px; align-items: stretch; }
+    .cfg-group { align-items: stretch; }
+    .cfg-group .lbl { text-align: center; }
+    .seg { justify-content: stretch; }
+    .seg-btn { flex: 1; padding: 10px 6px; }
+    .phase-strip { gap: 6px; }
+    .verdict .v-stats { gap: 16px; }
+    .shrow-head .mini { display: none; }       /* sparkline too small to read */
+    .shrow .del { opacity: 1; }
+
+    /* History rows: drop the IP column weight, keep tap room */
+    .hrow-head { column-gap: 8px; padding: 12px; }
+    .hrow-body { padding-left: 26px; }
+    .hrow .del { opacity: 1; }  /* no hover on touch — always visible */
+}
+
+@media (max-width: 380px) {
+    .summary .big-pair { gap: 18px; }
+    .summary .metric .v { font-size: 18px; }
+}
+
+@media (max-width: 600px) {
+    /* Iperf tab */
+    .iperf-output { max-height: 240px; font-size: 11px; }
+    .im-cmd-row { flex-wrap: wrap; }
+    .controls .iperf-state { align-self: center; }
+}

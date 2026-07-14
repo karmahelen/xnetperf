@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>xnetperf</title>
+<link rel="stylesheet" href="xnetperf.css?v=2">
+<link rel="stylesheet" href="xnetperf-mobile.css?v=2">
+</head>
+<body>
+  <div class="header">
+    <div class="header-title">
+      <img src="xnetperf.ico" class="logo-icon" alt="">
+      <div class="logo" data-hearth-name>xnetperf</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tabBtn-throughput" onclick="switchTab('throughput')">Throughput</button>
+    <button class="tab" id="tabBtn-stream" onclick="switchTab('stream')">Stream</button>
+    <button class="tab" id="tabBtn-multiclient" onclick="switchTab('multiclient')">Multi Client</button>
+    <button class="tab" id="tabBtn-iperf" onclick="switchTab('iperf')">Iperf</button>
+  </div>
+
+  <div class="content" id="content">
+    <div id="loopbackNote" class="note hidden">
+      Loopback self-test — client and server are the same machine, so these
+      numbers measure memory bandwidth and process overhead, not the network.
+      Run from another device in serve mode for a real measurement.
+    </div>
+
+    <!-- ================= Throughput tab ================= -->
+    <div class="tab-panel" id="tab-throughput">
+      <div class="gauges">
+        <div class="gauge-card" id="card-down">
+          <div class="gauge-wrap" id="gauge-down"></div>
+          <div class="gauge-meta">
+            <span class="gauge-label">Download</span>
+            <span class="gauge-sub" id="sub-down">—</span>
+          </div>
+        </div>
+        <div class="gauge-card" id="card-up">
+          <div class="gauge-wrap" id="gauge-up"></div>
+          <div class="gauge-meta">
+            <span class="gauge-label">Upload</span>
+            <span class="gauge-sub" id="sub-up">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn success big" id="startBtn" onclick="onStartClick()">Run Throughput Test</button>
+        <button class="btn icon-btn" id="cfgToggle" type="button" aria-expanded="false"
+                aria-label="Throughput test configuration" title="Configuration" onclick="toggleConfig()"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.49.49 0 0 0-.48-.41h-3.84a.49.49 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94 0 .32.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.13.22.39.3.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.25.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></button>
+      </div>
+      <div class="config-panel hidden" id="throughputConfig"></div>
+      <input type="text" class="desc-input" id="testDesc" maxlength="200"
+             placeholder="Optional: test description (e.g. kitchen AP 5GHz)">
+
+      <div id="summary" class="summary hidden"></div>
+
+      <div class="history collapsed" id="history">
+        <div class="history-head">
+          <button class="hist-toggle" id="historyToggle" onclick="toggleHistory()" aria-expanded="false">
+            <span class="chev">▶</span><span class="lbl">Past Runs</span>
+          </button>
+          <button class="btn danger small hist-clear" id="clearBtn" onclick="onClearClick()">Clear All</button>
+        </div>
+        <div id="historyList" class="history-list"></div>
+      </div>
+    </div>
+
+    <!-- ================= Stream tab ================= -->
+    <div class="tab-panel hidden" id="tab-stream">
+      <div class="safety-config">
+        <div class="cfg-group">
+          <span class="lbl">Stream profile</span>
+          <div class="seg" id="profileSeg"></div>
+          <div class="custom-fields hidden" id="customFields">
+            <label>Rate <input type="number" id="customRate" value="40" min="0.5" max="2000" step="0.5"> Mbps</label>
+            <label>Buffer <input type="number" id="customBuffer" value="5" min="1" max="30" step="0.5"> s</label>
+          </div>
+        </div>
+        <div class="cfg-group">
+          <span class="lbl">Bulk Load Contention</span>
+          <div class="seg" id="bulkSeg">
+            <button class="seg-btn active" data-dir="none" onclick="setBulkDir('none')">None</button>
+            <button class="seg-btn" data-dir="down" onclick="setBulkDir('down')">Download</button>
+            <button class="seg-btn" data-dir="up" onclick="setBulkDir('up')">Upload</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn success big" id="streamStartBtn" onclick="onStreamStartClick()">Run Stream Test</button>
+        <button class="btn icon-btn" id="streamCfgToggle" type="button" aria-expanded="false"
+                aria-label="Stream test configuration" title="Configuration" onclick="toggleStreamConfig()"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.49.49 0 0 0-.48-.41h-3.84a.49.49 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94 0 .32.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.13.22.39.3.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.25.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></button>
+      </div>
+      <div class="config-panel hidden" id="streamConfig"></div>
+      <input type="text" class="desc-input" id="streamTestDesc" maxlength="200"
+             placeholder="Optional: test description (e.g. kitchen AP 5GHz)">
+
+      <div class="phase-strip hidden" id="phaseStrip">
+        <span class="phase-step" id="ph-idle">1 · Idle baseline</span>
+        <span class="phase-step" id="ph-stream">2 · Stream alone</span>
+        <span class="phase-step" id="ph-loaded">3 · Stream + bulk</span>
+      </div>
+
+      <div class="chart-card hidden" id="chartCard">
+        <div id="streamChart"></div>
+        <div class="current-box">
+          <div class="current-head"><span class="live-dot"></span><span class="lbl">Current</span></div>
+          <div class="current-metrics" id="chartLive"></div>
+        </div>
+      </div>
+
+      <div id="streamVerdict" class="verdict hidden"></div>
+
+      <div id="streamHistory" class="history collapsed">
+        <div class="history-head">
+          <button class="hist-toggle" id="streamHistoryToggle" onclick="toggleStreamHistory()" aria-expanded="false">
+            <span class="chev">▶</span><span class="lbl">Past Runs</span>
+          </button>
+          <button class="btn danger small hist-clear" id="streamClearBtn" onclick="onStreamClearClick()">Clear All</button>
+        </div>
+        <div id="streamHistoryList" class="history-list"></div>
+      </div>
+    </div>
+
+    <!-- ================= Multi Client tab ================= -->
+    <div class="tab-panel hidden" id="tab-multiclient">
+        <div class="note" id="mcIntro">Coordinate a test across multiple connected
+          devices. Open <span class="mc-url" id="mcIntroUrl">this app's address</span>
+          and <span class="mc-cta">Connect Client</span>.</div>
+
+        <div class="controls" id="mcConnectControls">
+          <button class="btn success big" id="mcConnectBtn" onclick="mcToggleConnect()">Connect Client</button>
+        </div>
+
+        <div class="mc-roster-wrap hidden" id="mcRosterWrap">
+          <div class="io-head static"><span class="lbl">Connected Clients</span>
+            <span class="io-meta" id="mcRosterMeta"></span></div>
+          <div class="mc-roster" id="mcRoster"></div>
+        </div>
+
+        <div class="mc-run-wrap hidden" id="mcRunWrap">
+          <div class="controls">
+            <button class="btn success big" id="mcRunBtn" onclick="mcRun()">Run Multi Client Test</button>
+            <button class="btn icon-btn" id="mcCfgToggle" type="button" aria-expanded="false"
+                    aria-label="Multi Client test configuration" title="Configuration" onclick="toggleMcConfig()"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.49.49 0 0 0-.48-.41h-3.84a.49.49 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94 0 .32.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.13.22.39.3.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.25.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></button>
+          </div>
+          <div class="config-panel hidden" id="mcConfig"></div>
+          <input type="text" class="desc-input" id="mcTestDesc" maxlength="200"
+                 placeholder="Optional: test description (e.g. living room vs office)">
+        </div>
+
+        <div class="mc-countdown hidden" id="mcCountdown"></div>
+        <div class="mc-results hidden" id="mcResults"></div>
+      </div>
+
+    <!-- ================= Iperf tab ================= -->
+    <div class="tab-panel hidden" id="tab-iperf">
+      <div id="iperfMissing" class="note hidden">
+        <div class="im-title">iperf3 not found</div>
+        <div class="im-sub">Install it to run the reference server, then refresh.</div>
+        <div class="im-cmd-row">
+          <code class="im-cmd">sudo apt install iperf3</code>
+          <button class="btn icon-btn" id="iperfRefresh" type="button"
+                  onclick="iperfCheck()" title="Re-check for iperf3"
+                  aria-label="Re-check for iperf3">↻</button>
+        </div>
+      </div>
+
+      <div id="iperfMain" class="hidden">
+        <div class="controls">
+          <button class="btn success big" id="iperfStartBtn" onclick="onIperfToggle()">Start iperf Server</button>
+          <button class="btn icon-btn" id="iperfCfgToggle" type="button" aria-expanded="false"
+                  aria-label="Iperf server configuration" title="Server configuration" onclick="toggleIperfConfig()"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.49.49 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.49.49 0 0 0-.48-.41h-3.84a.49.49 0 0 0-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 0 0-.59.22L2.74 8.87a.49.49 0 0 0 .12.61l2.03 1.58c-.05.3-.07.62-.07.94 0 .32.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.13.22.39.3.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.25.41.48.41h3.84c.24 0 .44-.17.48-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 0 0-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1 1 12 8.4a3.6 3.6 0 0 1 0 7.2z"/></svg></button>
+          <span class="iperf-state" id="iperfState"></span>
+        </div>
+        <div class="config-panel hidden" id="iperfConfig"></div>
+
+        <div class="note iperf-hint hidden" id="iperfHint">
+          From another device run:
+          <div class="iperf-cmd-row">
+            <code class="iperf-cmd" id="iperfCmd">iperf3 -c <span id="iperfServerIp">&lt;SERVER_IP&gt;</span> -f m -i 1 -t 30 -P 6 -R</code>
+            <button class="btn iperf-copy" id="iperfCopyBtn" type="button" onclick="iperfCopyCmd(this)" title="Copy command" aria-label="Copy command">
+              <svg class="ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h8"/></svg>
+              <svg class="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
+            </button>
+          </div>
+          <span class="iperf-flags"><code>-P</code> number of parallel streams · <code>-R</code> reverse — download to the client (omit for upload)</span>
+        </div>
+
+        <div class="iperf-output-wrap hidden" id="iperfOutputWrap">
+          <button class="io-head" type="button" id="iperfOutputToggle"
+                  aria-expanded="false" aria-controls="iperfOutput" onclick="toggleIperfOutput()">
+            <span class="io-head-l"><span class="chev">&#x25B8;</span><span class="lbl">Server output</span></span>
+            <span class="io-meta" id="iperfMeta"></span>
+          </button>
+          <pre class="iperf-output hidden" id="iperfOutput"></pre>
+        </div>
+
+        <div id="iperfCharts" class="hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span id="statusText">Ready</span>
+    <span id="statusInfo"></span>
+  </div>
+
+  <script src="xnetperf.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Python Environment and Caches
+__pycache__/
+*.pyc
+.env
+venv/
+
+# Local State Files
+*.db
+*.log
+*.json

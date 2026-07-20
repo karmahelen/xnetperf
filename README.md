@@ -1,5 +1,7 @@
 # xnetperf
 
+[![Code Status](https://github.com/karmahelen/hearth/actions/workflows/security-scans.yml/badge.svg)](https://github.com/karmahelen/hearth/security/code-scanning)
+
 xnetperf is a network performance test utility built on the Hearth framework (https://github.com/karmahelen/hearth). Past runs are stored in a SQLite database (xnetperf.db) locally.
 
 Check out the "App Pics" below to see what it looks like and get a sense of what it can do.
